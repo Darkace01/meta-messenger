@@ -3,9 +3,9 @@ import Header from './Header';
 
 function HomePage() {
   return (
-    <>
+    <main>
       <Header />
-    </>
+    </main>
   );
 }
 
