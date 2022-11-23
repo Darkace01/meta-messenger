@@ -1,6 +1,8 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
+import { v4 as uuid } from 'uuid';
+import { Message } from '../typings';
 
 function ChatInput() {
   const [input, setInput] = useState('');
@@ -11,6 +13,30 @@ function ChatInput() {
 
     const messageToSend = input;
     setInput('');
+
+    const id = uuid();
+
+    const message: Message = {
+      id,
+      message: messageToSend,
+      created_at: Date.now(),
+      username: 'Kazeem Quadri',
+      proilePic: 'https://avatars.githubusercontent.com/u/33027659?v=4',
+      email: 'quadrikazeem01@gmail.com',
+    };
+
+    const uploadMessageToUpstash = async () => {
+      const res = await fetch('api/addMessage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+      console.log('message added to upstash', data);
+    };
+    uploadMessageToUpstash();
   };
   return (
     <form
@@ -29,7 +55,7 @@ function ChatInput() {
         disabled={!input}
         className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed'
       >
-        Sign Out
+        Send
       </button>
     </form>
   );
