@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import redis from '../../redis';
 import { Message } from '../../typings';
 type Data = {
-  message: Message;
+  messages: Message[];
 };
 
 type ErrorData = {
@@ -14,17 +14,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data | ErrorData>
 ) {
-  if (req.method !== 'POST') {
+  if (req.method !== 'GET') {
     res.status(405).json({ body: 'Method Not Allowed' });
     return;
   }
-  const { message } = req.body;
-  const newMessage = {
-    ...message,
-    created_at: Date.now(),
-  };
+  const messagesResponse = await redis.hvals('messages');
+  const messages: Message[] = messagesResponse
+    .map((message) => JSON.parse(message))
+    .sort((a, b) => b.created_at - a.created_at);
 
-  //push to upstash redis db
-  await redis.hset('messages', message.id, JSON.stringify(newMessage));
-  res.status(200).json({ message: newMessage });
+  res.status(200).json({ messages });
 }
