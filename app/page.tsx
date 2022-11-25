@@ -1,6 +1,5 @@
 import { Message } from '../typings';
 import ChatInput from './ChatInput';
-import Header from './Header';
 import MessageList from './MessageList';
 
 async function HomePage() {
@@ -10,7 +9,6 @@ async function HomePage() {
   const messages: Message[] = data.messages;
   return (
     <main>
-      <Header />
       <MessageList initialMessages={messages} />
       <ChatInput />
     </main>
